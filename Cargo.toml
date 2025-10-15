@@ -1,0 +1,11 @@
+[package]
+name = "dap-dau-vao-tuong"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+poise = { git = "https://github.com/serenity-rs/poise", branch = "current"}
+tokio = { version = "1.45.1", features = ["rt-multi-thread"] }
+tracing-subscriber = "0.3.19"
+dotenv = "0.15"
+rand = "0.8"

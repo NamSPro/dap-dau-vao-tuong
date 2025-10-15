@@ -1,0 +1,4 @@
+services:
+  dueling-bot:
+    build: .
+    restart: unless-stopped
