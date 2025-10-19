@@ -1,10 +1,8 @@
-# duelists-of-eternity
+# dap-dau-vao-tuong
 
-As in, that Granblue Fantasy x Shadowverse event.
+An immortalized meme.
 
 ## How to use
 
 Put a .env in with your discord bot token, and enjoy?
 
-## TODOS
-- choosing card when multiple options match, like how chuni bot works on songs with WORLD'S END charts

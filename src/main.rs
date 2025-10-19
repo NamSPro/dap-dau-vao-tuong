@@ -1,19 +1,19 @@
 #![warn(clippy::str_to_string)]
 
 mod commands;
+mod database;
+mod models;
+mod schema;
 
-use poise::serenity_prelude::{self as serenity, ActivityData, EditInteractionResponse, Interaction};
-use std::{
-    env::var, sync::Arc, time::Duration
-};
+use poise::serenity_prelude::{self as serenity, ActivityData};
+use std::{env::var, sync::Arc, time::Duration};
 
 // Types used by all command functions
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
 // Custom user data passed to all command functions
-pub struct Data {
-}
+pub struct Data {}
 
 async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
     // This is our custom error handler
@@ -43,6 +43,8 @@ async fn main() {
         commands: vec![
             commands::help(),
             commands::dap_dau_vao_tuong(),
+            commands::ddvt(),
+            commands::register(),
         ],
         prefix_options: poise::PrefixFrameworkOptions {
             prefix: Some("~".into()),
@@ -108,7 +110,7 @@ async fn main() {
 }
 
 async fn event_handler(
-    ctx: &serenity::Context,
+    _ctx: &serenity::Context,
     event: &serenity::FullEvent,
     _framework: poise::FrameworkContext<'_, Data, Error>,
     _data: &Data,
@@ -116,15 +118,6 @@ async fn event_handler(
     match event {
         serenity::FullEvent::Ready { data_about_bot, .. } => {
             println!("Logged in as {}", data_about_bot.user.name);
-        }
-        serenity::FullEvent::InteractionCreate { interaction } => {
-            match interaction {
-                Interaction::Component(interaction) => {
-                    interaction.defer(ctx).await?;
-                    interaction.edit_response(ctx, EditInteractionResponse::new().content("content")).await?;
-                }
-                _ => {}
-            }
         }
         _ => {}
     }
