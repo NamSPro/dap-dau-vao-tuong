@@ -81,8 +81,6 @@ pub async fn ddvt(_ctx: Context<'_>) -> Result<(), Error> {
     interaction_context = "Guild|BotDm|PrivateChannel"
 )]
 pub async fn play(ctx: Context<'_>) -> Result<(), Error> {
-    ctx.defer_or_broadcast().await?;
-    
     let user = ctx.author().display_name();
     let id = ctx.author().id;
     let result = rand::random::<bool>();

@@ -36,6 +36,7 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
 async fn main() {
     tracing_subscriber::fmt::init();
     dotenv::dotenv().ok();
+    database::run_migrations().expect("Failed to run database migrations");
 
     // FrameworkOptions contains all of poise's configuration option in one struct
     // Every option can be omitted to use its default value
@@ -58,6 +59,7 @@ async fn main() {
         // This code is run before every command
         pre_command: |ctx| {
             Box::pin(async move {
+                ctx.defer_or_broadcast().await.unwrap();
                 println!("Executing command {}...", ctx.command().qualified_name);
             })
         },

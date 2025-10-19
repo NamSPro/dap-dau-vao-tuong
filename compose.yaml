@@ -1,4 +1,4 @@
 services:
-  dueling-bot:
+  ddvt-bot:
     build: .
     restart: unless-stopped

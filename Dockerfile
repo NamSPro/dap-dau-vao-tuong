@@ -1,5 +1,5 @@
 FROM rust:latest AS builder
-ENV NAME=duelists-of-eternity
+ENV NAME=dap-dau-vao-tuong
 
 # First build a dummy project with our dependencies to cache them in Docker
 WORKDIR /usr/src
@@ -11,7 +11,10 @@ RUN cargo build --release
 
 # Second stage putting the build result into a debian trixie-slim image
 FROM debian:trixie-slim
-ENV NAME=duelists-of-eternity
+ENV NAME=dap-dau-vao-tuong
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  libsqlite3-dev \
+  && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /usr/src/${NAME}/target/release/${NAME} /usr/local/bin/${NAME}
 COPY ./assets /usr/local/bin/assets

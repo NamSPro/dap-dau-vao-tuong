@@ -1,12 +1,21 @@
 use diesel::prelude::*;
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use std::env;
 
 use crate::models::PlayerData;
+
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
 fn establish_connection() -> SqliteConnection {
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     SqliteConnection::establish(&database_url)
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
+}
+
+pub fn run_migrations() -> Result<(), crate::Error> {
+    let conn = &mut establish_connection();
+    conn.run_pending_migrations(MIGRATIONS)?;
+    Ok(())
 }
 
 pub fn get_player_data(user_id: i64) -> QueryResult<PlayerData> {
