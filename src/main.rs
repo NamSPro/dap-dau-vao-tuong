@@ -64,6 +64,7 @@ async fn main() {
         // This code is run after a command if it was successful (returned Ok)
         post_command: |ctx| {
             Box::pin(async move {
+                ctx.say("This bot is in beta. Wipes may happen at any time and without warning.").await.unwrap();
                 println!("Executed command {}!", ctx.command().qualified_name);
             })
         },
