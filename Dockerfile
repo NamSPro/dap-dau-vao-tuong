@@ -1,23 +1,25 @@
-FROM rust:latest AS builder
-ENV NAME=dap-dau-vao-tuong
+FROM beerpsi/cargo-chef-musl-mimalloc:latest AS chef
+WORKDIR /app
 
-# First build a dummy project with our dependencies to cache them in Docker
-WORKDIR /usr/src
-RUN mkdir ${NAME}
-WORKDIR /usr/src/${NAME}
+FROM chef AS planner
 COPY . .
-RUN rm -rf target
-RUN cargo build --release 
+RUN cargo chef prepare --recipe-path recipe.json
 
-# Second stage putting the build result into a debian trixie-slim image
-FROM debian:trixie-slim
-ENV NAME=dap-dau-vao-tuong
+FROM chef AS builder
+COPY --from=planner /app/recipe.json recipe.json
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  libsqlite3-dev \
-  && rm -rf /var/lib/apt/lists/*
+  openssl \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN cargo chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
 
-COPY --from=builder /usr/src/${NAME}/target/release/${NAME} /usr/local/bin/${NAME}
-COPY ./assets /usr/local/bin/assets
-COPY ./.env /usr/local/bin/.env
-WORKDIR /usr/local/bin
-CMD ${NAME}
+COPY . .
+RUN cargo build --release --target x86_64-unknown-linux-musl
+
+FROM gcr.io/distroless/static AS runtime
+WORKDIR /app
+ENV NAME=dap-dau-vao-tuong
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/${NAME} /app/
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  libcurl4 \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+CMD ["/app/${NAME}"]

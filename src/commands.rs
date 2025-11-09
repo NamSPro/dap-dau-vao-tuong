@@ -1,7 +1,7 @@
 use tokio::fs::File;
 use poise::{CreateReply, serenity_prelude::CreateAttachment};
 
-use crate::{database, Context, Error};
+use crate::{Context, Error};
 
 mod ddvt;
 
@@ -41,6 +41,19 @@ pub async fn register(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
+/// show beta notice
+#[poise::command(
+    prefix_command,
+    slash_command,
+    category = "Info",
+    install_context = "Guild|User",
+    interaction_context = "Guild|BotDm|PrivateChannel",
+)]
+pub async fn beta_notice(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.say("This bot is in beta. Wipes may happen at any time and without warning.").await?;
+    Ok(())
+}
+
 /// Dap dau vao tuong, might fail
 #[poise::command(
     prefix_command,
@@ -55,7 +68,17 @@ pub async fn dap_dau_vao_tuong(ctx: Context<'_>) -> Result<(), Error> {
     let result_text = if result { "thanh cong" } else { "that bai" };
 
     let response = format!("{user} da dap dau vao tuong {result_text}.");
-    ctx.say(response).await?;
+    let music = if result {
+        File::open("assets/victory.flac").await?
+    } else {
+        File::open("assets/defeat.flac").await?
+    };
+    ctx.send(CreateReply {
+        content: Some(response),
+        attachments: vec![CreateAttachment::file(&music, "bgm.flac").await?],
+        ..Default::default()
+    })
+    .await?;
     Ok(())
 }
 
@@ -66,7 +89,7 @@ pub async fn dap_dau_vao_tuong(ctx: Context<'_>) -> Result<(), Error> {
     category = "Game",
     install_context = "Guild|User",
     interaction_context = "Guild|BotDm|PrivateChannel",
-    subcommands("damage_check", "play", "health_check"),
+    subcommands("damage_check", "play", "health_check", "upgrade"),
     subcommand_required
 )]
 pub async fn ddvt(_ctx: Context<'_>) -> Result<(), Error> {
@@ -83,20 +106,13 @@ pub async fn ddvt(_ctx: Context<'_>) -> Result<(), Error> {
 pub async fn play(ctx: Context<'_>) -> Result<(), Error> {
     let user = ctx.author().display_name();
     let id = ctx.author().id;
-    let result = rand::random::<bool>();
-    let result_text = if result { "thanh cong" } else { "that bai" };
-    let damage_dealt = if result { 1.0 } else { 0.5 };
-    let damage_taken = 1.0;
 
-    let mut player_data = database::get_player_data(i64::from(id))?;
-    player_data = ddvt::regen(player_data);
-    let old_health = player_data.health;
-    player_data = ddvt::attack(player_data, damage_dealt, damage_taken);
-    let new_health = player_data.health;
-    database::set_player_data(&player_data)?;
+    let (old_health, _, _) = ddvt::regen(i64::from(id))?;
+    let (result, damage_dealt, new_health) = ddvt::attack(i64::from(id))?;
+    let result_text = if result { "thanh cong" } else { "that bai" };
 
     let attack_result = format!(
-        "{user} da dap dau vao tuong {result_text}.\nTuong da nhan {damage_dealt} sat thuong. Ban con lai {0} HP.",
+        "{user} da dap dau vao tuong {result_text}.\nTuong da nhan {damage_dealt} sat thuong. Ban con lai {0} HP.\nNhan duoc {damage_dealt} vinh du.",
         new_health
     );
     let response = if old_health <= 0.0 {
@@ -132,9 +148,9 @@ pub async fn play(ctx: Context<'_>) -> Result<(), Error> {
 pub async fn damage_check(ctx: Context<'_>) -> Result<(), Error> {
     let user = ctx.author().display_name();
     let id = ctx.author().id;
-    let player_data = database::get_player_data(i64::from(id))?;
+    let damage = ddvt::get_total_damage(i64::from(id))?;
 
-    let response = format!("{user} da gay ra tong cong {0} sat thuong cho tuong.", player_data.total_damage);
+    let response = format!("{user} da gay ra tong cong {damage} sat thuong cho tuong.");
     ctx.say(response).await?;
     Ok(())
 }
@@ -150,19 +166,31 @@ pub async fn health_check(ctx: Context<'_>) -> Result<(), Error> {
     let user = ctx.author().display_name();
     let id = ctx.author().id;
 
-    let mut player_data = database::get_player_data(i64::from(id))?;
-    player_data = ddvt::regen(player_data);
-    database::set_player_data(&player_data)?;
+    let (health, player_max_health, player_last_attack) = ddvt::regen(i64::from(id))?;
 
-    let response = format!("{user} con lai {0} HP.\n", player_data.health);
-    let next_regen = if player_data.health <= 0.0 {
-        let respawn_time = player_data.last_attack + (2.0 * player_data.max_health) as i64 * 60;
+    let response = format!("{user} con lai {health}/{player_max_health} HP.\n");
+    let next_regen = if health <= 0.0 {
+        let respawn_time = player_last_attack + (2.0 * player_max_health) as i64 * 60;
         format!("Ban se hoi sinh vao luc <t:{respawn_time}:f>.")
     }
-    else {
-        let next_heal_time = player_data.last_attack + 60;
+    else if health < player_max_health {
+        let next_heal_time = player_last_attack + 60;
         format!("Ban se hoi phuc 1 HP vao luc <t:{next_heal_time}:f>.")
+    }
+    else {
+        "".to_string()
     };
     ctx.say(response + &next_regen).await?;
+    Ok(())
+}
+
+/// Upgrades stats
+#[poise::command(
+    prefix_command,
+    slash_command,
+    install_context = "Guild|User",
+    interaction_context = "Guild|BotDm|PrivateChannel"
+)]
+pub async fn upgrade(_ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }

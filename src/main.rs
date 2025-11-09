@@ -46,6 +46,7 @@ async fn main() {
             commands::dap_dau_vao_tuong(),
             commands::ddvt(),
             commands::register(),
+            commands::beta_notice(),
         ],
         prefix_options: poise::PrefixFrameworkOptions {
             prefix: Some("~".into()),
@@ -66,7 +67,6 @@ async fn main() {
         // This code is run after a command if it was successful (returned Ok)
         post_command: |ctx| {
             Box::pin(async move {
-                ctx.say("This bot is in beta. Wipes may happen at any time and without warning.").await.unwrap();
                 println!("Executed command {}!", ctx.command().qualified_name);
             })
         },
@@ -100,7 +100,7 @@ async fn main() {
         .options(options)
         .build();
     let token = var("DISCORD_TOKEN")
-        .expect("Missing `DISCORD_TOKEN` env var, see README for more information.");
+        .expect("Missing `DISCORD_TOKEN` env var");
     let intents =
         serenity::GatewayIntents::non_privileged() | serenity::GatewayIntents::MESSAGE_CONTENT;
 

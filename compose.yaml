@@ -2,3 +2,8 @@ services:
   ddvt-bot:
     build: .
     restart: unless-stopped
+    volumes:
+      - db: ./db
+
+volumes:
+  db:
