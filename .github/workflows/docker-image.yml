@@ -39,7 +39,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/NamSPro/duelists-of-eternity
+          images: ghcr.io/NamSPro/dap-dau-vao-tuong
 
       - name: Build and push
         uses: docker/build-push-action@v6
