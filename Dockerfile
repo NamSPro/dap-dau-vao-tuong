@@ -19,6 +19,7 @@ FROM debian:trixie-slim AS runtime
 WORKDIR /app
 ENV NAME=dap-dau-vao-tuong
 COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/${NAME} /app/
+COPY /assets/ /app/assets/
 RUN apt-get update && apt-get install -y --no-install-recommends \
   libcurl4 \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
