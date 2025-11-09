@@ -22,4 +22,4 @@ COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/${NAME} /app/
 RUN apt-get update && apt-get install -y --no-install-recommends \
   libcurl4 \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-CMD ["/app/${NAME}"]
+CMD /app/${NAME}
