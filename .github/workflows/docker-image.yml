@@ -3,6 +3,7 @@ name: Docker Image CI
 on:
   push:
     paths:
+      - "assets/**"
       - "**/*.rs"
       - "Cargo.lock"
       - "Cargo.toml"
