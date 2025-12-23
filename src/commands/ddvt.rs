@@ -24,6 +24,7 @@ pub fn regen(user: i64) -> Result<(f64, f64, i64), crate::Error> {
             player.health = player.max_health;
         }
     }
+    player.last_attack = player.last_attack + regen_amount * 60;
     database::set_player_data(&player)?;
     Ok((player.health, player.max_health, player.last_attack))
 }
