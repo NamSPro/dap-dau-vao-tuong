@@ -191,6 +191,23 @@ pub async fn health_check(ctx: Context<'_>) -> Result<(), Error> {
     install_context = "Guild|User",
     interaction_context = "Guild|BotDm|PrivateChannel"
 )]
-pub async fn upgrade(_ctx: Context<'_>) -> Result<(), Error> {
+pub async fn upgrade(ctx: Context<'_>) -> Result<(), Error> {
+    let _user = ctx.author().display_name();
+    let id = ctx.author().id;
+    let stats = ddvt::get_player_upgradable_stats(i64::from(id))?;
+    Ok(())
+}
+
+/// Version info
+#[poise::command(
+    prefix_command,
+    slash_command,
+    install_context = "Guild|User",
+    interaction_context = "Guild|BotDm|PrivateChannel"
+)]
+pub async fn version_info(ctx: Context<'_>) -> Result<(), Error> {
+    let version = env!("CARGO_PKG_VERSION");
+    let version_name = std::env::var("VERSION_NAME")?;
+    ctx.say(format!("Current bot version: {version} ({version_name})")).await?;
     Ok(())
 }

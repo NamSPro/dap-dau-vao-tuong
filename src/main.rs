@@ -47,6 +47,7 @@ async fn main() {
             commands::ddvt(),
             commands::register(),
             commands::beta_notice(),
+            commands::version_info()
         ],
         prefix_options: poise::PrefixFrameworkOptions {
             prefix: Some("~".into()),

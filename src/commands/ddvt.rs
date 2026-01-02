@@ -42,7 +42,7 @@ pub fn attack(user: i64) -> Result<(bool, f64, f64), crate::Error> {
     let roll = rand::random_bool(ATTACK_SUCCESS_BASE + 0.01 * stats.attack_success_level as f64);
     let mut damage_dealt = ATTACK_BASE * stats.attack_flat_level as f64 * ATTACK_MULT.powi(stats.attack_mult_level);
     if !roll { 
-        damage_dealt *= 0.5; 
+        damage_dealt *= 0.5;
     }
     player.total_damage += damage_dealt;
     player.available_honors += damage_dealt;
@@ -55,3 +55,18 @@ pub fn get_total_damage(user: i64) -> Result<f64, crate::Error> {
     let player = database::get_player_data(user)?;
     Ok(player.total_damage)
 }
+
+// mudae upgrade system uses one command for each thing upgradeable
+// then maybe i add a general command with buttons as well
+pub fn get_player_upgradable_stats(user: i64) -> Result<(f64, f64, i32, i32, i32), crate::Error> {
+    let player = database::get_player_data(user)?;
+    let stats = database::get_player_stats(user)?;
+    Ok((
+        player.available_honors,
+        player.max_health,
+        stats.attack_flat_level,
+        stats.attack_mult_level,
+        stats.attack_success_level,
+    ))
+}
+// ai magic
