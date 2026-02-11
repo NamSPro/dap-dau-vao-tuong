@@ -6,3 +6,5 @@ An immortalized meme.
 
 Put a .env in with your discord bot token, and enjoy?
 
+Also require an OpenSSL installation.
+

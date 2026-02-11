@@ -82,6 +82,39 @@ pub async fn dap_dau_vao_tuong(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
+/// Dap dau vao BREAK, might miss
+#[poise::command(
+    prefix_command,
+    slash_command,
+    category = "Fluff",
+    install_context = "Guild|User",
+    interaction_context = "Guild|BotDm|PrivateChannel"
+)]
+pub async fn dap_dau_vao_break(ctx: Context<'_>) -> Result<(), Error> {
+    let user = ctx.author().display_name();
+    let button = rand::random_range(0..8) + 1;
+    let result = rand::random_range(0..8);
+    let fastlate = if rand::random::<bool>() { "FAST" } else { "LATE" };
+    let result_text = match result {
+        0 => "MISS",
+        1 => "GOOD " + fastlate,
+        2 => "LOW GREAT " + fastlate,
+        3 => "MID GREAT " + fastlate,
+        4 => "HIGH GREAT " + fastlate,
+        5 => "LOW PERFECT " + fastlate,
+        6 => "MID PERFECT " + fastlate,
+        7 => "CRITICAL PERFECT",
+        _ => ""
+    };
+    let response =format!("{user} da dap dau vao break o nut {button} va nhan duoc judgment {result_text}.");
+    ctx.send(CreateReply {
+        content: Some(response),
+        ..Default::default()
+    })
+    .await?;
+    Ok(())
+}
+
 /// Dap dau vao tuong, the game
 #[poise::command(
     prefix_command,

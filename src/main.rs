@@ -44,6 +44,7 @@ async fn main() {
         commands: vec![
             commands::help(),
             commands::dap_dau_vao_tuong(),
+            commands::dap_dau_vao_break(),
             commands::ddvt(),
             commands::register(),
             commands::beta_notice(),

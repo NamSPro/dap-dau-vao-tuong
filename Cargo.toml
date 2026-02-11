@@ -8,7 +8,7 @@ chrono = "0.4"
 diesel = { version = "2.3", features = ["sqlite", "returning_clauses_for_sqlite_3_35", "chrono"] }
 diesel_migrations = "2.3"
 dotenv = "0.15"
-openssl-sys = { version = "0.9", features = ["vendored"] }
+openssl-sys = { version = "0.9" }
 poise = { git = "https://github.com/serenity-rs/poise", branch = "current"}
 rand = "0.9"
 tokio = { version = "1.45.1", features = ["rt-multi-thread"] }
