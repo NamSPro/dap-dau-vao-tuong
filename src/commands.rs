@@ -97,12 +97,12 @@ pub async fn dap_dau_vao_break(ctx: Context<'_>) -> Result<(), Error> {
     let fastlate = if rand::random::<bool>() { "FAST" } else { "LATE" };
     let result_text = match result {
         0 => "MISS",
-        1 => "GOOD " + fastlate,
-        2 => "LOW GREAT " + fastlate,
-        3 => "MID GREAT " + fastlate,
-        4 => "HIGH GREAT " + fastlate,
-        5 => "LOW PERFECT " + fastlate,
-        6 => "MID PERFECT " + fastlate,
+        1 => "GOOD ".to_owned() + fastlate,
+        2 => "LOW GREAT ".to_owned() + fastlate,
+        3 => "MID GREAT ".to_owned() + fastlate,
+        4 => "HIGH GREAT ".to_owned() + fastlate,
+        5 => "LOW PERFECT ".to_owned() + fastlate,
+        6 => "MID PERFECT ".to_owned() + fastlate,
         7 => "CRITICAL PERFECT",
         _ => ""
     };
