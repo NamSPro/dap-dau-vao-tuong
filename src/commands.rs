@@ -96,15 +96,15 @@ pub async fn dap_dau_vao_break(ctx: Context<'_>) -> Result<(), Error> {
     let result = rand::random_range(0..8);
     let fastlate = if rand::random::<bool>() { "FAST" } else { "LATE" };
     let result_text = match result {
-        0 => "MISS",
+        0 => "MISS".to_string(),
         1 => "GOOD ".to_owned() + fastlate,
         2 => "LOW GREAT ".to_owned() + fastlate,
         3 => "MID GREAT ".to_owned() + fastlate,
         4 => "HIGH GREAT ".to_owned() + fastlate,
         5 => "LOW PERFECT ".to_owned() + fastlate,
         6 => "MID PERFECT ".to_owned() + fastlate,
-        7 => "CRITICAL PERFECT",
-        _ => ""
+        7 => "CRITICAL PERFECT".to_string(),
+        _ => "".to_string()
     };
     let response =format!("{user} da dap dau vao break o nut {button} va nhan duoc judgment {result_text}.");
     ctx.send(CreateReply {

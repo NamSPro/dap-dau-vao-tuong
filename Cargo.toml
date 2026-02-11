@@ -1,12 +1,14 @@
 [package]
 name = "dap-dau-vao-tuong"
 version = "0.1.0"
+edition = "2024"
 
 [dependencies]
 chrono = "0.4"
 diesel = { version = "2.3", features = ["sqlite", "returning_clauses_for_sqlite_3_35", "chrono"] }
 diesel_migrations = "2.3"
 dotenv = "0.15"
+libsqlite3-sys = { version = "0.35", features = ["bundled"] }
 openssl-sys = { version = "0.9", features = ["vendored"] }
 poise = { git = "https://github.com/serenity-rs/poise", branch = "current"}
 rand = "0.9"
