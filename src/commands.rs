@@ -245,7 +245,6 @@ pub async fn upgrade(ctx: Context<'_>) -> Result<(), Error> {
 )]
 pub async fn version_info(ctx: Context<'_>) -> Result<(), Error> {
     let version = env!("CARGO_PKG_VERSION");
-    let version_name = std::env::var("VERSION_NAME")?;
-    ctx.say(format!("Current bot version: {version} ({version_name})")).await?;
+    ctx.say(format!("Current bot version: {version}")).await?;
     Ok(())
 }
