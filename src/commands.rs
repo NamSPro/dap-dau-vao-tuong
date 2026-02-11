@@ -90,10 +90,15 @@ pub async fn dap_dau_vao_tuong(ctx: Context<'_>) -> Result<(), Error> {
     install_context = "Guild|User",
     interaction_context = "Guild|BotDm|PrivateChannel"
 )]
-pub async fn dap_dau_vao_break(ctx: Context<'_>) -> Result<(), Error> {
+pub async fn dap_dau_vao_break(
+    ctx: Context<'_>,
+    #[description = "Forces to break to spawn at 1"]
+    rhythm_test: Option<bool>
+) -> Result<(), Error> {
+    let rhythm_test = rhythm_test.unwrap_or(false);
     let user = ctx.author().display_name();
     let button = rand::random_range(0..8) + 1;
-    let result = rand::random_range(0..8);
+    let result = if rhythm_test { 1 } else { rand::random_range(0..8) };
     let fastlate = if rand::random::<bool>() { "FAST" } else { "LATE" };
     let result_text = match result {
         0 => "MISS".to_string(),
@@ -227,7 +232,7 @@ pub async fn health_check(ctx: Context<'_>) -> Result<(), Error> {
 pub async fn upgrade(ctx: Context<'_>) -> Result<(), Error> {
     let _user = ctx.author().display_name();
     let id = ctx.author().id;
-    let stats = ddvt::get_player_upgradable_stats(i64::from(id))?;
+    let _stats = ddvt::get_player_upgradable_stats(i64::from(id))?;
     Ok(())
 }
 
