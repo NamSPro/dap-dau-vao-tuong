@@ -232,7 +232,9 @@ pub async fn health_check(ctx: Context<'_>) -> Result<(), Error> {
 pub async fn upgrade(ctx: Context<'_>) -> Result<(), Error> {
     let _user = ctx.author().display_name();
     let id = ctx.author().id;
-    let _stats = ddvt::get_player_upgradable_stats(i64::from(id))?;
+    let honors = ddvt::get_player_honors(i64::from(id))?;
+    ctx.say(format!("Ban dang co {honors} vinh du.\n
+        Su dung cac lenh nang cap de nang cap chi so.")).await?;
     Ok(())
 }
 

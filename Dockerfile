@@ -7,8 +7,6 @@ RUN cargo chef prepare --recipe-path recipe.json
 
 FROM chef AS builder
 COPY --from=planner /app/recipe.json recipe.json
-RUN apt-get update && apt-get install -y --no-install-recommends \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN cargo chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
 
 COPY . .

@@ -5,17 +5,18 @@ const ATTACK_SUCCESS_BASE: f64 = 0.5;
 const ATTACK_BASE: f64 = 1.0;
 const ATTACK_MULT: f64 = 1.05;
 const DAMAGE_BASE: f64 = 1.0;
+const REGEN_TIME: i64 = 60;
 
 pub fn regen(user: i64) -> Result<(f64, f64, i64), crate::Error> {
     let mut player = database::get_player_data(user)?;
     let now = Local::now().timestamp();
     let time_diff = now - player.last_attack;
-    let regen_amount = time_diff / 60; // Regenerate 1 HP every 60 seconds
+    let regen_amount = time_diff / REGEN_TIME; // Regenerate 1 HP every 60 seconds
     if player.health <= 0.0 {
         if regen_amount as f64 >= 2.0 * player.max_health {
             player.health = player.max_health;
+            database::set_player_data(&player)?;
         }
-        database::set_player_data(&player)?;
         return Ok((player.health, player.max_health, player.last_attack));
     }
     if regen_amount > 0 {
@@ -58,15 +59,7 @@ pub fn get_total_damage(user: i64) -> Result<f64, crate::Error> {
 
 // mudae upgrade system uses one command for each thing upgradeable
 // then maybe i add a general command with buttons as well
-pub fn get_player_upgradable_stats(user: i64) -> Result<(f64, f64, i32, i32, i32), crate::Error> {
+pub fn get_player_honors(user: i64) -> Result<f64, crate::Error> {
     let player = database::get_player_data(user)?;
-    let stats = database::get_player_stats(user)?;
-    Ok((
-        player.available_honors,
-        player.max_health,
-        stats.attack_flat_level,
-        stats.attack_mult_level,
-        stats.attack_success_level,
-    ))
+    Ok(player.available_honors)
 }
-// ai magic
